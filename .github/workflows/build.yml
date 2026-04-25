@@ -69,8 +69,10 @@ jobs:
       - name: Create Release and upload wheel
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: wheel-build
-          name: Wheel Build
+          tag_name: build-${{ github.run_number }}
+          name: Wheel Build ${{ github.run_number }}
+          #tag_name: wheel-build
+          #name: Wheel Build
           files: dist/*.whl
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
