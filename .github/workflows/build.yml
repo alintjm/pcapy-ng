@@ -19,7 +19,18 @@ jobs:
       - name: Install build tools
         run: |
           pip install build setuptools wheel
+      
+      - name: Download Npcap SDK
+        run: |
+          curl -LO https://npcap.com/dist/npcap-sdk-1.13.zip
+          mkdir npcap-sdk
+          tar -xf npcap-sdk-1.13.zip -C npcap-sdk --strip-components=1
 
+      - name: Set NPCAP environment variables
+        run: |
+          echo "NPCAP_INCLUDE=$(pwd)/npcap-sdk/Include" >> $env:GITHUB_ENV
+          echo "NPCAP_LIB=$(pwd)/npcap-sdk/Lib/x64" >> $env:GITHUB_ENV
+          
       - name: Build wheel
         run: |
           python -m build --wheel
