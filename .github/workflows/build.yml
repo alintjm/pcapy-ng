@@ -60,9 +60,18 @@ jobs:
         run: |
           python -m build --wheel
 
-      - name: Upload wheel
-        uses: actions/upload-artifact@v4
+      #- name: Upload wheel
+      #  uses: actions/upload-artifact@v4
+      #  with:
+      #    name: wheel
+      #    path: dist/*.whl
+
+      - name: Create Release and upload wheel
+        uses: softprops/action-gh-release@v2
         with:
-          name: wheel
-          path: dist/*.whl
-          
+          tag_name: wheel-build
+          name: Wheel Build
+          files: dist/*.whl
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
