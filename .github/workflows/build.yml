@@ -30,7 +30,14 @@ jobs:
         run: |
           echo "NPCAP_INCLUDE=$(pwd)/npcap-sdk/Include" >> $env:GITHUB_ENV
           echo "NPCAP_LIB=$(pwd)/npcap-sdk/Lib/x64" >> $env:GITHUB_ENV
-
+      
+      - name: Patch setup.py to use Npcap SDK
+        run: |
+          (Get-Content setup.py) `
+          -replace "c:\\\\wpdpack\\\\Include", "$env:GITHUB_WORKSPACE\\npcap-sdk\\Include" `
+          -replace "c:\\\\wpdpack\\\\Lib", "$env:GITHUB_WORKSPACE\\npcap-sdk\\Lib\\x64" `
+          | Set-Content setup.py
+          
       - name: Build wheel
         env:
           CPATH: ${{ env.NPCAP_INCLUDE }}
