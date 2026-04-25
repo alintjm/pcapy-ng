@@ -66,14 +66,27 @@ jobs:
       #    name: wheel
       #    path: dist/*.whl
 
-      - name: Create Release and upload wheel
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: build-${{ github.run_number }}
-          name: Wheel Build ${{ github.run_number }}
-          #tag_name: wheel-build
-          #name: Wheel Build
-          files: dist/*.whl
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #- name: Create Release and upload wheel
+      #  uses: softprops/action-gh-release@v2
+      #  with:
+      #    tag_name: build-${{ github.run_number }}
+      #    name: Wheel Build ${{ github.run_number }}
+      #    #tag_name: wheel-build
+      #    #name: Wheel Build
+      #    files: dist/*.whl
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Upload wheel to wheels branch
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git checkout -B wheels
+
+          mkdir -p wheels
+          cp dist/*.whl wheels/
+
+          git add wheels/*.whl
+          git commit -m "Wheel build ${{ github.run_number }}"
+          git push origin wheels --force
