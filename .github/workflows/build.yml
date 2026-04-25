@@ -1,4 +1,4 @@
-name: Build Windows Wheel
+name: Build Windows Wheel (Python 3.13)
 
 on:
   workflow_dispatch:
@@ -11,33 +11,36 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.2.0
 
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v5.2.0
         with:
           python-version: "3.13"
 
-      - name: Install build tools
+      - name: Install build deps
         run: |
           pip install build setuptools wheel
-      
+
       - name: Download Npcap SDK
         run: |
           curl -LO https://npcap.com/dist/npcap-sdk-1.13.zip
           mkdir npcap-sdk
           tar -xf npcap-sdk-1.13.zip -C npcap-sdk --strip-components=1
 
-      - name: Set NPCAP environment variables
+      - name: Set Env Vars
         run: |
           echo "NPCAP_INCLUDE=$(pwd)/npcap-sdk/Include" >> $env:GITHUB_ENV
           echo "NPCAP_LIB=$(pwd)/npcap-sdk/Lib/x64" >> $env:GITHUB_ENV
-          
+
       - name: Build wheel
+        env:
+          CPATH: ${{ env.NPCAP_INCLUDE }}
+          LIB: ${{ env.NPCAP_LIB }}
         run: |
           python -m build --wheel
 
       - name: Upload wheel
         uses: actions/upload-artifact@v4.4.0
         with:
-          name: wheels
+          name: wheel
           path: dist/*.whl
           
