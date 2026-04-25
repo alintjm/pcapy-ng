@@ -85,11 +85,14 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
+          REM create or switch to 'wheels' branch locally
           git checkout -B wheels
 
+          REM make wheels directory and copy files
           mkdir -p wheels
           cp dist/*.whl wheels/
 
           git add wheels/*.whl
-          git commit -m "Wheel build ${{ github.run_number }}"
+          git commit -m "Wheel build ${{ github.run_number }}" || echo "No changes to commit"
+          
           git push origin wheels --force
