@@ -6,24 +6,26 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4.2.0
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v5.2.0
         with:
-          python-version: '3.13'    # or your version
+          python-version: "3.13"
 
-      - name: Install build deps
+      - name: Install build tools
         run: |
-          pip install wheel setuptools build
+          pip install build setuptools wheel
 
       - name: Build wheel
         run: |
           python -m build --wheel
 
       - name: Upload wheel
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.4.0
         with:
           name: wheels
           path: dist/*.whl
