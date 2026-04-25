@@ -1,4 +1,4 @@
-name: Build Windows Wheel (Python 3.13)
+name: Build Windows Wheel
 
 on:
   workflow_dispatch:
@@ -8,45 +8,35 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4.2.0
+      - uses: actions/checkout@v4.2.0
 
-      - name: Setup Python
-        uses: actions/setup-python@v5.2.0
+      - uses: actions/setup-python@v5.2.0
         with:
           python-version: "3.13"
 
-      - name: Install build deps
+      - name: Install build dependencies
         run: |
           pip install build setuptools wheel
 
       - name: Download Npcap SDK
         run: |
-          curl -LO https://npcap.com/dist/npcap-sdk-1.13.zip
-          mkdir npcap-sdk
-          tar -xf npcap-sdk-1.13.zip -C npcap-sdk --strip-components=1
+          curl -L -o npcap-sdk.zip https://npcap.com/dist/npcap-sdk-1.13.zip
+          tar -xf npcap-sdk.zip
+          ren npcap-sdk-1.13 npcap-sdk
 
-      - name: Set Env Vars
-        run: |
-          echo "NPCAP_INCLUDE=$(pwd)/npcap-sdk/Include" >> $env:GITHUB_ENV
-          echo "NPCAP_LIB=$(pwd)/npcap-sdk/Lib/x64" >> $env:GITHUB_ENV
-      
-      - name: Patch setup.py to use Npcap SDK
+      - name: Patch setup.py
         run: |
           (Get-Content setup.py) `
           -replace "c:\\\\wpdpack\\\\Include", "$env:GITHUB_WORKSPACE\\npcap-sdk\\Include" `
           -replace "c:\\\\wpdpack\\\\Lib", "$env:GITHUB_WORKSPACE\\npcap-sdk\\Lib\\x64" `
           | Set-Content setup.py
-          
+
       - name: Build wheel
-        env:
-          CPATH: ${{ env.NPCAP_INCLUDE }}
-          LIB: ${{ env.NPCAP_LIB }}
         run: |
           python -m build --wheel
 
       - name: Upload wheel
-        uses: actions/upload-artifact@v4.4.0
+        uses: actions/upload-artifact@v4
         with:
           name: wheel
           path: dist/*.whl
