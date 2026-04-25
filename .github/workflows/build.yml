@@ -24,6 +24,11 @@ jobs:
           tar -xf npcap-sdk.zip
         # This extracts to folder "npcap-sdk", NOT "npcap-sdk-1.13"
 
+      - name: Show extracted files
+        run: |
+          Write-Host "Contents of workspace:"
+          Get-ChildItem -Recurse -Depth 2
+          
       - name: Create fake wpdpack directory
         run: |
           mkdir C:\wpdpack
@@ -33,6 +38,13 @@ jobs:
 
           Copy-Item -Recurse -Force npcap-sdk\Include\* C:\wpdpack\Include\
           Copy-Item -Recurse -Force npcap-sdk\Lib\x64\* C:\wpdpack\Lib\x64\
+
+        # $folder = Get-ChildItem -Directory | Where-Object { $_.Name -like "npcap*" } | Select-Object -First 1
+        # Write-Host "Detected Npcap folder: $($folder.FullName)"
+        
+        # Copy-Item -Recurse -Force "$($folder.FullName)\Include\*" C:\wpdpack\Include\
+        # Copy-Item -Recurse -Force "$($folder.FullName)\Lib\x64\*" C:\wpdpack\Lib\x64\
+
           
       # - name: Patch setup.py
       #  run: |
