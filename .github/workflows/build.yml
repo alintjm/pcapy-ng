@@ -24,12 +24,22 @@ jobs:
           tar -xf npcap-sdk.zip
         # This extracts to folder "npcap-sdk", NOT "npcap-sdk-1.13"
 
-      - name: Patch setup.py
+      - name: Create fake wpdpack directory
         run: |
-          (Get-Content setup.py) `
-          -replace "c:\\\\wpdpack\\\\Include", "$env:GITHUB_WORKSPACE\\npcap-sdk\\Include" `
-          -replace "c:\\\\wpdpack\\\\Lib", "$env:GITHUB_WORKSPACE\\npcap-sdk\\Lib\\x64" `
-          | Set-Content setup.py
+          mkdir C:\wpdpack
+          mkdir C:\wpdpack\Include
+          mkdir C:\wpdpack\Lib
+          mkdir C:\wpdpack\Lib\x64
+
+          Copy-Item -Recurse -Force npcap-sdk\Include\* C:\wpdpack\Include\
+          Copy-Item -Recurse -Force npcap-sdk\Lib\x64\* C:\wpdpack\Lib\x64\
+          
+      # - name: Patch setup.py
+      #  run: |
+      #    (Get-Content setup.py) `
+      #   -replace "c:\\\\wpdpack\\\\Include", "$env:GITHUB_WORKSPACE\\npcap-sdk\\Include" `
+      #    -replace "c:\\\\wpdpack\\\\Lib", "$env:GITHUB_WORKSPACE\\npcap-sdk\\Lib\\x64" `
+      #    | Set-Content setup.py
 
       - name: Build wheel
         run: |
