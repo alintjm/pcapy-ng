@@ -22,7 +22,7 @@ jobs:
         run: |
           curl -L -o npcap-sdk.zip https://npcap.com/dist/npcap-sdk-1.13.zip
           tar -xf npcap-sdk.zip
-          ren npcap-sdk-1.13 npcap-sdk
+        # This extracts to folder "npcap-sdk", NOT "npcap-sdk-1.13"
 
       - name: Patch setup.py
         run: |
@@ -35,6 +35,12 @@ jobs:
         run: |
           python -m build --wheel
 
+      - name: Upload wheel
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheel
+          path: dist/*.whl
+          
       - name: Upload wheel
         uses: actions/upload-artifact@v4
         with:
