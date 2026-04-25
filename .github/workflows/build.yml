@@ -85,10 +85,10 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
-          REM create or switch to 'wheels' branch locally
+          # create or switch to 'wheels' branch locally
           git checkout -B wheels
 
-          REM make wheels directory and copy files
+          # make wheels directory and copy files
           mkdir -p wheels
           cp dist/*.whl wheels/
 
